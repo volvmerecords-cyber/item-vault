@@ -1,0 +1,43 @@
+const initialItems = [
+  {
+    id: "1",
+    name: "MacBook Pro",
+    category: "Electronics",
+    price: 1299,
+    condition: "Good",
+    location: "Home office",
+    purchaseDate: "2024-03-14",
+    notes: "Used mostly for study and remote work.",
+    imageUrl: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80",
+    status: "owned",
+    createdAt: "2026-06-01",
+  },
+  {
+    id: "2",
+    name: "Acoustic guitar",
+    category: "Instruments",
+    price: 250,
+    condition: "Fair",
+    location: "Living room",
+    purchaseDate: "2023-11-29",
+    notes: "Needs new strings soon.",
+    imageUrl: "https://images.unsplash.com/photo-1511376777868-611b54f68947?auto=format&fit=crop&w=800&q=80",
+    status: "borrowed",
+    createdAt: "2026-06-02",
+  },
+  {
+    id: "3",
+    name: "Desk lamp",
+    category: "Furniture",
+    price: 45,
+    condition: "Excellent",
+    location: "Bedroom",
+    purchaseDate: "2025-09-10",
+    notes: "LED lamp with adjustable arm.",
+    imageUrl: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=800&q=80",
+    status: "owned",
+    createdAt: "2026-06-03",
+  },
+];
+
+export default initialItems;
