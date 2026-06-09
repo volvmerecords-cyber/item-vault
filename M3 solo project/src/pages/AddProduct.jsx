@@ -8,7 +8,7 @@ function AddProduct() {
 
   async function handleCreateProduct(item) {
     await addProduct(item);
-    navigate("/dashboard");
+    navigate("/dashboard", { replace: true });
   }
 
   return (
@@ -17,7 +17,7 @@ function AddProduct() {
         <div>
           <span className="eyebrow">Add item</span>
           <h1>Add a new inventory item.</h1>
-          <p>Track details like price, condition, purchase date, and item status.</p>
+          <p>Track details like condition, location, purchase date, and item status.</p>
         </div>
       </div>
 

@@ -1,6 +1,12 @@
 import { useNavigate, useParams, Link } from "react-router-dom";
 import useProducts from "../hooks/useProducts";
 
+function formatStatus(status) {
+  if (!status) return "";
+
+  return status.charAt(0).toUpperCase() + status.slice(1);
+}
+
 function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -31,13 +37,21 @@ function ProductDetails() {
     navigate("/dashboard");
   }
 
+  const optionalDetails = [
+    item.price !== null && item.price !== undefined && item.price !== ""
+      ? ["Price", `$${Number(item.price).toFixed(2)}`]
+      : null,
+    item.condition ? ["Condition", item.condition] : null,
+    item.purchaseDate ? ["Purchase date", item.purchaseDate] : null,
+  ].filter(Boolean);
+
   return (
     <section className="section-card">
       <div className="section-header">
         <div>
           <span className="eyebrow">Item details</span>
           <h1>{item.name}</h1>
-          <p>{item.notes}</p>
+          {item.notes && <p>{item.notes}</p>}
         </div>
         <div className="details-actions">
           <Link className="button button--secondary" to={`/items/${item.id}/edit`}>
@@ -60,26 +74,28 @@ function ProductDetails() {
           <p>{item.category}</p>
         </div>
         <div className="detail-card">
-          <h2>Price</h2>
-          <p>${Number(item.price).toFixed(2)}</p>
-        </div>
-        <div className="detail-card">
-          <h2>Condition</h2>
-          <p>{item.condition}</p>
-        </div>
-        <div className="detail-card">
           <h2>Location</h2>
           <p>{item.location}</p>
         </div>
         <div className="detail-card">
-          <h2>Purchase date</h2>
-          <p>{item.purchaseDate}</p>
-        </div>
-        <div className="detail-card">
           <h2>Status</h2>
-          <p>{item.status}</p>
+          <p>{formatStatus(item.status)}</p>
         </div>
       </div>
+
+      {optionalDetails.length > 0 && (
+        <details className="optional-fields item-details-more">
+          <summary>More details</summary>
+          <dl className="optional-detail-list">
+            {optionalDetails.map(([label, value]) => (
+              <div key={label}>
+                <dt>{label}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))}
+          </dl>
+        </details>
+      )}
 
       <div className="section-footer">
         <Link className="button button--secondary" to="/dashboard">

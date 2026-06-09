@@ -23,7 +23,7 @@ function Home() {
       <div className="hero-panel">
         <h2>Inventory made easy</h2>
         <p>
-          Add items with category, price, condition, purchase date, and notes.
+          Add items with category, condition, location, purchase date, and notes.
           Filter and search so you always know what you own.
         </p>
       </div>

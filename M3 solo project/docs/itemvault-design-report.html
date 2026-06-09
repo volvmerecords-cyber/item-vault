@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ItemVault Design Report</title>
+    <style>
+      :root {
+        --ink: #102a43;
+        --muted: #53616f;
+        --paper: #ffffff;
+        --soft: #f4f5fb;
+        --line: #d8dee8;
+        --primary: #4f46e5;
+        --primary-dark: #3730a3;
+        --green: #166534;
+        --red: #991b1b;
+        --amber: #92400e;
+        --blue: #0369a1;
+      }
+
+      @page {
+        size: A4;
+        margin: 16mm;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--soft);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 11.4pt;
+        line-height: 1.55;
+      }
+
+      .page {
+        width: 210mm;
+        min-height: 297mm;
+        margin: 0 auto;
+        background: var(--paper);
+        padding: 0;
+      }
+
+      .cover {
+        min-height: 250mm;
+        display: grid;
+        align-content: center;
+        gap: 22px;
+        padding: 22mm 18mm;
+        border-bottom: 10px solid var(--primary);
+      }
+
+      .eyebrow {
+        display: inline-block;
+        color: var(--primary-dark);
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 9.5pt;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 620px;
+        margin-bottom: 0;
+        font-size: 38pt;
+        line-height: 1.05;
+        letter-spacing: -0.01em;
+      }
+
+      .subtitle {
+        max-width: 620px;
+        color: var(--muted);
+        font-size: 15pt;
+      }
+
+      .meta-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        max-width: 620px;
+      }
+
+      .meta-card,
+      .card,
+      .screen,
+      .callout {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #fff;
+      }
+
+      .meta-card {
+        padding: 14px;
+      }
+
+      .meta-card strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .content {
+        padding: 14mm 18mm 18mm;
+      }
+
+      section {
+        break-inside: avoid;
+        margin-bottom: 20px;
+      }
+
+      h2 {
+        margin-bottom: 8px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid var(--primary);
+        font-size: 20pt;
+        line-height: 1.2;
+      }
+
+      h3 {
+        margin-bottom: 6px;
+        font-size: 13.5pt;
+      }
+
+      ul {
+        margin: 8px 0 0 18px;
+        padding: 0;
+      }
+
+      li {
+        margin: 4px 0;
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .three-col {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .card {
+        padding: 14px;
+      }
+
+      .card p:last-child,
+      .screen p:last-child,
+      .callout p:last-child {
+        margin-bottom: 0;
+      }
+
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .flow-step {
+        min-height: 70px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #f8fafc;
+        text-align: center;
+        font-weight: 700;
+      }
+
+      .screen {
+        padding: 14px;
+      }
+
+      .screens {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .swatches {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .swatch {
+        min-height: 70px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+
+      .swatch span {
+        display: block;
+        margin-top: 22px;
+        color: #fff;
+        font-size: 8.5pt;
+        font-weight: 700;
+      }
+
+      .soft-swatch span {
+        color: var(--ink);
+      }
+
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .tag {
+        display: inline-flex;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #eef2ff;
+        color: var(--primary-dark);
+        font-size: 9.5pt;
+        font-weight: 700;
+      }
+
+      .tag.owned {
+        background: #ddf3e2;
+        color: var(--green);
+      }
+
+      .tag.sold {
+        background: #fee2e2;
+        color: var(--red);
+      }
+
+      .tag.lost {
+        background: #fde68a;
+        color: var(--amber);
+      }
+
+      .tag.borrowed {
+        background: #e0f2fe;
+        color: var(--blue);
+      }
+
+      .callout {
+        padding: 14px 16px;
+        background: #f8fafc;
+        border-left: 5px solid var(--primary);
+      }
+
+      .file-list {
+        columns: 2;
+        column-gap: 24px;
+        color: var(--muted);
+        font-size: 10pt;
+      }
+
+      code {
+        color: var(--primary-dark);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 9.5pt;
+      }
+
+      footer {
+        margin-top: 18px;
+        padding-top: 10px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 9pt;
+      }
+
+      .page-break {
+        break-before: page;
+      }
+
+      @media print {
+        body {
+          background: #fff;
+        }
+
+        .page {
+          width: auto;
+          min-height: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="cover">
+        <div>
+          <span class="eyebrow">M3 Solo Project</span>
+          <h1>ItemVault Design Report</h1>
+        </div>
+        <p class="subtitle">
+          A complete explanation of the user interface, visual design, navigation, features,
+          components, authentication, and data choices used in the personal inventory app.
+        </p>
+        <div class="meta-grid">
+          <div class="meta-card">
+            <strong>Product</strong>
+            ItemVault
+          </div>
+          <div class="meta-card">
+            <strong>Stack</strong>
+            React, Vite, Firebase
+          </div>
+          <div class="meta-card">
+            <strong>Date</strong>
+            June 5, 2026
+          </div>
+        </div>
+      </section>
+
+      <div class="content">
+        <section>
+          <h2>Project Overview</h2>
+          <p>
+            ItemVault is a personal inventory manager designed to help a user record,
+            organize, search, and update belongings in one clean dashboard. The design
+            focuses on clarity: users can quickly see what they own, how much their owned
+            items are worth, where an item is located, and whether an item is owned, sold,
+            lost, or borrowed.
+          </p>
+          <div class="callout">
+            <strong>Main design idea:</strong>
+            the app should feel simple, trustworthy, and easy to scan, so the user can manage
+            inventory details without feeling like they are using a complicated admin system.
+          </div>
+        </section>
+
+        <section>
+          <h2>Design Goals</h2>
+          <div class="three-col">
+            <div class="card">
+              <h3>Simple Organization</h3>
+              <p>
+                The dashboard brings search, category filters, status filters, stats, and item
+                cards together so the user can find inventory information quickly.
+              </p>
+            </div>
+            <div class="card">
+              <h3>Secure Personal Data</h3>
+              <p>
+                Authentication protects product pages, while Firestore stores each user's items
+                under that user's account.
+              </p>
+            </div>
+            <div class="card">
+              <h3>Consistent Experience</h3>
+              <p>
+                Cards, rounded controls, color tokens, spacing, and repeated page structures keep
+                the app familiar from screen to screen.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>Visual System</h2>
+          <p>
+            The design uses a calm light theme with strong indigo actions, white surfaces, soft
+            borders, and rounded cards. A dark theme is also available from the navigation bar and
+            is stored in <code>localStorage</code> so the user's preference remains after refresh.
+          </p>
+          <div class="swatches">
+            <div class="swatch" style="background:#4f46e5"><span>#4f46e5 Primary</span></div>
+            <div class="swatch" style="background:#3730a3"><span>#3730a3 Primary Dark</span></div>
+            <div class="swatch" style="background:#102a43"><span>#102a43 Text</span></div>
+            <div class="swatch soft-swatch" style="background:#f4f5fb"><span>#f4f5fb Background</span></div>
+          </div>
+          <ul>
+            <li><strong>Typography:</strong> system sans-serif fonts are used for a modern, readable interface.</li>
+            <li><strong>Shape language:</strong> large rounded cards and pill buttons create a friendly visual style.</li>
+            <li><strong>Elevation:</strong> shadows separate important surfaces like cards, forms, and dashboard panels.</li>
+            <li><strong>Status color:</strong> item status tags use green, red, amber, and blue to make state easy to scan.</li>
+          </ul>
+          <div class="tag-row">
+            <span class="tag owned">Owned</span>
+            <span class="tag sold">Sold</span>
+            <span class="tag lost">Lost</span>
+            <span class="tag borrowed">Borrowed</span>
+          </div>
+        </section>
+
+        <section>
+          <h2>User Flow</h2>
+          <p>
+            The app is organized around a short, practical journey: users enter through the home
+            page, sign in or register, then manage their inventory from the protected dashboard.
+          </p>
+          <div class="flow">
+            <div class="flow-step">Home</div>
+            <div class="flow-step">Login or Register</div>
+            <div class="flow-step">Dashboard</div>
+            <div class="flow-step">Add or View Item</div>
+            <div class="flow-step">Edit or Delete</div>
+          </div>
+        </section>
+
+        <section class="page-break">
+          <h2>Screen-by-Screen Design</h2>
+          <div class="screens">
+            <div class="screen">
+              <h3>Home Page</h3>
+              <p>
+                The home screen introduces ItemVault with a clear headline, short explanation,
+                and two primary actions: view the dashboard or add an item. A supporting panel
+                explains the product value in plain language.
+              </p>
+            </div>
+            <div class="screen">
+              <h3>Login and Register</h3>
+              <p>
+                Authentication screens use centered cards, clear labels, error messages, and
+                Google sign-in buttons. Register also captures first name and surname so the app
+                can greet the user personally.
+              </p>
+            </div>
+            <div class="screen">
+              <h3>Dashboard</h3>
+              <p>
+                The dashboard welcomes the user, shows total items and owned value, then provides
+                search, category filtering, and status filtering before listing matching item cards.
+              </p>
+            </div>
+            <div class="screen">
+              <h3>Add Item</h3>
+              <p>
+                The add form collects the main inventory details: name, category, price, condition,
+                status, location, purchase date, image URL, and optional notes.
+              </p>
+            </div>
+            <div class="screen">
+              <h3>Item Details</h3>
+              <p>
+                Each item has a focused detail page with image support, item metadata cards, and
+                actions to edit or delete the item.
+              </p>
+            </div>
+            <div class="screen">
+              <h3>Edit Item</h3>
+              <p>
+                Editing reuses the same product form with existing item data pre-filled, keeping
+                the create and update experiences consistent.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>Navigation and Protection</h2>
+          <p>
+            Routing is handled through React Router. Public pages include Home, Login, and Register.
+            Inventory pages are grouped inside a protected route area, so dashboard, add item,
+            item details, and edit item screens only render for authenticated users.
+          </p>
+          <ul>
+            <li><code>/</code> shows the public home page.</li>
+            <li><code>/login</code> and <code>/register</code> handle account access.</li>
+            <li><code>/dashboard</code>, <code>/add-item</code>, <code>/items/:id</code>, and <code>/items/:id/edit</code> are protected inventory routes.</li>
+            <li>The navbar changes based on login state, showing dashboard, add item, greeting, and logout only for signed-in users.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Reusable Components</h2>
+          <div class="two-col">
+            <div class="card">
+              <h3>ProductForm</h3>
+              <p>
+                Reused for both adding and editing items. It validates required fields, prevents
+                negative prices, and disables submission until the form is valid.
+              </p>
+            </div>
+            <div class="card">
+              <h3>ProductCard</h3>
+              <p>
+                Presents item image, category, status, notes, location, price, purchase date, and
+                a view action in a scannable card layout.
+              </p>
+            </div>
+            <div class="card">
+              <h3>SearchBar and FilterDropdown</h3>
+              <p>
+                Keep dashboard controls reusable and accessible with labels and controlled input
+                values.
+              </p>
+            </div>
+            <div class="card">
+              <h3>InventoryStats</h3>
+              <p>
+                Summarizes total item count and total owned value so the dashboard gives an
+                immediate overview before the item grid.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>Data and Authentication Design</h2>
+          <p>
+            The app uses Firebase Authentication for account management and Firestore for inventory
+            storage. The product context listens to the current user's Firestore items in real time,
+            filters by <code>userId</code>, and orders the results by creation date.
+          </p>
+          <ul>
+            <li><strong>Email/password authentication:</strong> users can create an account and log in with credentials.</li>
+            <li><strong>Google authentication:</strong> users can continue with a Google account.</li>
+            <li><strong>User-scoped data:</strong> each item is saved with the current Firebase user's ID.</li>
+            <li><strong>Real-time updates:</strong> Firestore snapshots keep the dashboard synced with database changes.</li>
+          </ul>
+        </section>
+
+        <section class="page-break">
+          <h2>Interaction Details</h2>
+          <div class="two-col">
+            <div class="card">
+              <h3>Search and Filters</h3>
+              <p>
+                The dashboard uses memoized filtering to combine item name search, category
+                selection, and status selection. This keeps the interface responsive and predictable.
+              </p>
+            </div>
+            <div class="card">
+              <h3>Validation</h3>
+              <p>
+                The product form validates item name, category, price, condition, location,
+                purchase date, and status. Inline errors help users fix issues before saving.
+              </p>
+            </div>
+            <div class="card">
+              <h3>Empty States</h3>
+              <p>
+                The product list gives different messages when the inventory is empty versus when
+                filters return no results, making the next step clear.
+              </p>
+            </div>
+            <div class="card">
+              <h3>Personalization</h3>
+              <p>
+                The dashboard and navbar greet the user by first name or email prefix, making the
+                product feel personal without adding complexity.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>Responsive Design</h2>
+          <p>
+            The layout uses CSS Grid, flexible widths, and media queries to adapt from desktop to
+            smaller screens. The hero, detail grid, dashboard controls, and form rows collapse into
+            one-column layouts on narrow screens so content remains readable and controls stay easy
+            to tap.
+          </p>
+        </section>
+
+        <section>
+          <h2>Accessibility Choices</h2>
+          <ul>
+            <li>Inputs use visible labels or accessible labels.</li>
+            <li>Product images include alt text based on the item name.</li>
+            <li>Buttons include disabled states while forms are submitting.</li>
+            <li>Color is supported by readable text labels, so status is not communicated by color alone.</li>
+            <li>Loading and not-found states explain what is happening instead of leaving blank screens.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Implementation Files</h2>
+          <p>The main design and behavior are split across these project files:</p>
+          <ul class="file-list">
+            <li><code>src/App.jsx</code> - route structure and lazy-loaded pages</li>
+            <li><code>src/App.css</code> - visual system, layout, cards, forms, and responsive rules</li>
+            <li><code>src/pages/Home.jsx</code> - landing experience</li>
+            <li><code>src/pages/Products.jsx</code> - dashboard, filtering, and stats</li>
+            <li><code>src/pages/AddProduct.jsx</code> - create item page</li>
+            <li><code>src/pages/ProductDetails.jsx</code> - item detail and delete action</li>
+            <li><code>src/pages/EditRequest.jsx</code> - edit item page</li>
+            <li><code>src/components/ProductForm.jsx</code> - reusable add/edit form</li>
+            <li><code>src/components/ProductCard.jsx</code> - reusable item card</li>
+            <li><code>src/context/AuthContext.jsx</code> - authentication state and actions</li>
+            <li><code>src/context/ProductContext.jsx</code> - Firestore inventory data</li>
+            <li><code>src/firebase/firebaseClient.js</code> - Firebase setup</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Final Note</h2>
+          <p>
+            The current implementation stores live inventory data with Firebase/Firestore. Some
+            interface copy still mentions <code>localStorage</code>, which looks like earlier project
+            wording. For the final submission, that copy should be updated to say Firebase/Firestore
+            if the cloud data design is the intended final design.
+          </p>
+        </section>
+
+        <footer>
+          Generated for the ItemVault M3 Solo Project. Source: <code>docs/itemvault-design-report.html</code>.
+        </footer>
+      </div>
+    </main>
+  </body>
+</html>

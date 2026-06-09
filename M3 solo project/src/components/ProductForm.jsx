@@ -1,154 +1,220 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+
+const COMMON_LOCATIONS = [
+  "Bedroom",
+  "Living room",
+  "Kitchen",
+  "Office",
+  "Garage",
+  "Storage",
+];
 
 function ProductForm({ initialData = {}, onSubmit, submitLabel = "Save item" }) {
+  const initialLocation = initialData.location || "";
+  const initialLocationOption = COMMON_LOCATIONS.includes(initialLocation)
+    ? initialLocation
+    : initialLocation
+      ? "custom"
+      : "";
+
   const [name, setName] = useState(initialData.name || "");
   const [category, setCategory] = useState(initialData.category || "");
   const [price, setPrice] = useState(initialData.price ?? "");
-  const [condition, setCondition] = useState(initialData.condition || "Good");
-  const [location, setLocation] = useState(initialData.location || "");
+  const [condition, setCondition] = useState(initialData.condition || "");
+  const [locationOption, setLocationOption] = useState(initialLocationOption);
+  const [customLocation, setCustomLocation] = useState(
+    initialLocationOption === "custom" ? initialLocation : "",
+  );
   const [purchaseDate, setPurchaseDate] = useState(initialData.purchaseDate || "");
   const [notes, setNotes] = useState(initialData.notes || "");
   const [imageUrl, setImageUrl] = useState(initialData.imageUrl || "");
   const [status, setStatus] = useState(initialData.status || "owned");
   const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const isSubmittingRef = useRef(false);
+  const location = locationOption === "custom" ? customLocation : locationOption;
 
-  useEffect(() => {
+  const getValidationErrors = useCallback(() => {
     const validationErrors = {};
 
     if (!name.trim()) validationErrors.name = "Item name is required.";
     if (!category.trim()) validationErrors.category = "Category is required.";
-    if (!price || Number(price) < 0) validationErrors.price = "Price must be zero or more.";
-    if (!condition.trim()) validationErrors.condition = "Condition is required.";
+    if (price !== "" && (Number.isNaN(Number(price)) || Number(price) < 0)) {
+      validationErrors.price = "Price must be zero or more.";
+    }
     if (!location.trim()) validationErrors.location = "Location is required.";
-    if (!purchaseDate.trim()) validationErrors.purchaseDate = "Purchase date is required.";
     if (!status.trim()) validationErrors.status = "Status is required.";
 
-    setErrors(validationErrors);
-  }, [name, category, price, condition, location, purchaseDate, status]);
+    return validationErrors;
+  }, [name, category, price, location, status]);
 
-  function handleSubmit(event) {
+  useEffect(() => {
+    const validationErrors = getValidationErrors();
+
+    setErrors(validationErrors);
+  }, [getValidationErrors]);
+
+  async function handleSubmit(event) {
     event.preventDefault();
 
-    if (Object.keys(errors).length > 0) return;
+    const validationErrors = getValidationErrors();
+    setErrors(validationErrors);
 
-    onSubmit({
-      id: initialData.id || Date.now().toString(),
-      name: name.trim(),
-      category: category.trim(),
-      price: Number(price),
-      condition: condition.trim(),
-      location: location.trim(),
-      purchaseDate: purchaseDate.trim(),
-      notes: notes.trim(),
-      imageUrl: imageUrl.trim(),
-      status: status.trim(),
-      createdAt: initialData.createdAt || new Date().toISOString().split("T")[0],
-    });
+    if (isSubmittingRef.current || Object.keys(validationErrors).length > 0) return;
+
+    setSubmitError("");
+    isSubmittingRef.current = true;
+    setIsSubmitting(true);
+
+    try {
+      await onSubmit({
+        id: initialData.id || Date.now().toString(),
+        name: name.trim(),
+        category: category.trim(),
+        price: price === "" ? null : Number(price),
+        condition: condition.trim(),
+        location: location.trim(),
+        purchaseDate: purchaseDate.trim(),
+        notes: notes.trim(),
+        imageUrl: imageUrl.trim(),
+        status: status.trim(),
+        createdAt: initialData.createdAt || new Date().toISOString().split("T")[0],
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Could not save item. Please try again.";
+
+      setSubmitError(message);
+      isSubmittingRef.current = false;
+      setIsSubmitting(false);
+    }
   }
 
   return (
     <form className="product-form" onSubmit={handleSubmit} noValidate>
-      <label>
-        Item name
-        <input
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-          placeholder="e.g. Laptop, Sofa, Bicycle"
-        />
-        {errors.name && <span className="field-error">{errors.name}</span>}
-      </label>
-
-      <div className="field-row">
+      <fieldset className="product-form__fieldset" disabled={isSubmitting}>
         <label>
-          Category
+          Item name
           <input
-            value={category}
-            onChange={(event) => setCategory(event.target.value)}
-            placeholder="e.g. Electronics, Furniture"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            placeholder="e.g. Laptop, Sofa, Bicycle"
           />
-          {errors.category && <span className="field-error">{errors.category}</span>}
+          {errors.name && <span className="field-error">{errors.name}</span>}
         </label>
 
-        <label>
-          Price
-          <input
-            type="number"
-            min="0"
-            value={price}
-            onChange={(event) => setPrice(event.target.value)}
-            placeholder="0.00"
-          />
-          {errors.price && <span className="field-error">{errors.price}</span>}
-        </label>
-      </div>
+        <div className="field-row">
+          <label>
+            Category
+            <input
+              value={category}
+              onChange={(event) => setCategory(event.target.value)}
+              placeholder="e.g. Electronics, Furniture"
+            />
+            {errors.category && <span className="field-error">{errors.category}</span>}
+          </label>
 
-      <div className="field-row">
-        <label>
-          Condition
-          <select value={condition} onChange={(event) => setCondition(event.target.value)}>
-            <option>Excellent</option>
-            <option>Good</option>
-            <option>Fair</option>
-            <option>Poor</option>
-          </select>
-          {errors.condition && <span className="field-error">{errors.condition}</span>}
-        </label>
+          <label>
+            Status
+            <select value={status} onChange={(event) => setStatus(event.target.value)}>
+              <option value="owned">Owned</option>
+              <option value="borrow">Borrow</option>
+              <option value="borrowed">Borrowed</option>
+              <option value="sold">Sold</option>
+              <option value="lost">Lost</option>
+            </select>
+            {errors.status && <span className="field-error">{errors.status}</span>}
+          </label>
+        </div>
 
-        <label>
-          Status
-          <select value={status} onChange={(event) => setStatus(event.target.value)}>
-            <option value="owned">Owned</option>
-            <option value="sold">Sold</option>
-            <option value="lost">Lost</option>
-            <option value="borrowed">Borrowed</option>
-          </select>
-          {errors.status && <span className="field-error">{errors.status}</span>}
-        </label>
-      </div>
-
-      <div className="field-row">
         <label>
           Location
-          <input
-            value={location}
-            onChange={(event) => setLocation(event.target.value)}
-            placeholder="e.g. Office, Living room"
-          />
+          <select
+            value={locationOption}
+            onChange={(event) => setLocationOption(event.target.value)}
+          >
+            <option value="">Choose a location</option>
+            {COMMON_LOCATIONS.map((locationName) => (
+              <option key={locationName} value={locationName}>
+                {locationName}
+              </option>
+            ))}
+            <option value="custom">Add your own</option>
+          </select>
+          {locationOption === "custom" && (
+            <input
+              value={customLocation}
+              onChange={(event) => setCustomLocation(event.target.value)}
+              placeholder="Enter a custom location"
+              aria-label="Custom location"
+            />
+          )}
           {errors.location && <span className="field-error">{errors.location}</span>}
         </label>
 
-        <label>
-          Purchase date
-          <input
-            type="date"
-            value={purchaseDate}
-            onChange={(event) => setPurchaseDate(event.target.value)}
-          />
-          {errors.purchaseDate && <span className="field-error">{errors.purchaseDate}</span>}
-        </label>
-      </div>
+        <details className="optional-fields">
+          <summary>Optional details</summary>
+          <div className="optional-fields__content">
+            <div className="field-row">
+              <label>
+                Price
+                <input
+                  type="number"
+                  min="0"
+                  value={price}
+                  onChange={(event) => setPrice(event.target.value)}
+                  placeholder="0.00"
+                />
+                {errors.price && <span className="field-error">{errors.price}</span>}
+              </label>
 
-      <label>
-        Image URL
-        <input
-          value={imageUrl}
-          onChange={(event) => setImageUrl(event.target.value)}
-          placeholder="https://example.com/item.jpg"
-        />
-      </label>
+              <label>
+                Condition
+                <select value={condition} onChange={(event) => setCondition(event.target.value)}>
+                  <option value="">Not specified</option>
+                  <option>Excellent</option>
+                  <option>Good</option>
+                  <option>Fair</option>
+                  <option>Poor</option>
+                </select>
+              </label>
+            </div>
 
-      <label>
-        Notes
-        <textarea
-          value={notes}
-          onChange={(event) => setNotes(event.target.value)}
-          placeholder="Add optional notes about the item"
-        />
-      </label>
+            <label>
+              Purchase date
+              <input
+                type="date"
+                value={purchaseDate}
+                onChange={(event) => setPurchaseDate(event.target.value)}
+              />
+            </label>
 
-      <button type="submit" disabled={Object.keys(errors).length > 0}>
-        {submitLabel}
-      </button>
+            <label>
+              Image URL
+              <input
+                value={imageUrl}
+                onChange={(event) => setImageUrl(event.target.value)}
+                placeholder="https://example.com/item.jpg"
+              />
+            </label>
+
+            <label>
+              Notes
+              <textarea
+                value={notes}
+                onChange={(event) => setNotes(event.target.value)}
+                placeholder="Add optional notes about the item"
+              />
+            </label>
+          </div>
+        </details>
+
+        {submitError && <p className="form-error">{submitError}</p>}
+
+        <button type="submit" disabled={Object.keys(errors).length > 0 || isSubmitting}>
+          {isSubmitting ? "Saving..." : submitLabel}
+        </button>
+      </fieldset>
     </form>
   );
 }

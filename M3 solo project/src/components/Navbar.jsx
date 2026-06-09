@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
 
 function Navbar() {
-  const { logout, isLoggedIn, greetingName } = useAuth();
+  const { logout, isLoggedIn } = useAuth();
 
   // Theme state persisted in localStorage
   const [theme, setTheme] = useState(() => {
@@ -34,20 +34,10 @@ function Navbar() {
       </div>
 
       <nav className="main-nav">
-        <Link className="nav-link" to="/">Home</Link>
         {isLoggedIn ? (
-          <>
-            <span className="user-greeting">Hi, {greetingName}</span>
-            <Link className="nav-link" to="/dashboard">
-              Dashboard
-            </Link>
-            <Link className="button button--secondary" to="/add-item">
-              Add item
-            </Link>
-            <button className="button button--secondary" onClick={logout}>
-              Logout
-            </button>
-          </>
+          <button className="button button--secondary" onClick={logout}>
+            Logout
+          </button>
         ) : (
           <>
             <Link className="nav-link" to="/login">
@@ -60,11 +50,12 @@ function Navbar() {
         )}
 
         <button
-          aria-label="Toggle theme"
+          aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           className="button button--secondary theme-toggle"
           onClick={toggleTheme}
+          title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
         >
-          {theme === "dark" ? "Light" : "Dark"}
+          <span aria-hidden="true">{theme === "dark" ? "☀" : "☾"}</span>
         </button>
       </nav>
     </header>

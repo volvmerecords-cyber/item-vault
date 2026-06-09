@@ -1,22 +1,20 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
 import useProducts from "../hooks/useProducts";
 import ItemList from "../components/ProductList";
 import SearchBar from "../components/SearchBar";
 import FilterDropdown from "../components/FilterDropdown";
-import InventoryStats from "../components/InventoryStats";
 
 const statusOptions = [
   { value: "all", label: "All statuses" },
   { value: "owned", label: "Owned" },
+  { value: "borrow", label: "Borrow" },
+  { value: "borrowed", label: "Borrowed" },
   { value: "sold", label: "Sold" },
   { value: "lost", label: "Lost" },
-  { value: "borrowed", label: "Borrowed" },
 ];
 
 function Products() {
-  const { greetingName } = useAuth();
   const { products } = useProducts();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -43,24 +41,23 @@ function Products() {
   }, [products, search, categoryFilter, statusFilter]);
 
   const totalItems = products.length;
-  const totalOwnedValue = products.reduce((sum, item) => {
-    return item.status === "owned" ? sum + Number(item.price || 0) : sum;
-  }, 0);
+  const itemCountText =
+    filteredItems.length === totalItems
+      ? `${totalItems} ${totalItems === 1 ? "item" : "items"}`
+      : `${filteredItems.length} of ${totalItems} items`;
 
   return (
     <section className="section-card">
       <div className="section-header">
         <div>
-          <span className="eyebrow">Dashboard</span>
-          <h1>Welcome back, {greetingName}</h1>
-          <p>Use search and filters to find items fast, then view or manage them from one clean dashboard.</p>
+          <span className="eyebrow">Items</span>
+          <h1>Your inventory items</h1>
+          <p>Browse what you have, where it is, and its current status.</p>
         </div>
         <Link className="button button--primary" to="/add-item">
           Add item
         </Link>
       </div>
-
-      <InventoryStats totalItems={totalItems} ownedValue={totalOwnedValue} />
 
       <div className="dashboard-controls">
         <SearchBar value={search} onChange={setSearch} placeholder="Search by item name..." />
@@ -76,6 +73,11 @@ function Products() {
           options={statusOptions}
           onChange={setStatusFilter}
         />
+      </div>
+
+      <div className="items-heading">
+        <h2>Item list</h2>
+        <span>{itemCountText}</span>
       </div>
 
       <ItemList products={filteredItems} hasProducts={totalItems > 0} />

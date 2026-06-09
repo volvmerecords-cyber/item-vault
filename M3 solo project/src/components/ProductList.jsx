@@ -12,7 +12,7 @@ function ProductList({ products, hasProducts }) {
         ) : (
           <>
             <h2>Your inventory is empty</h2>
-            <p>Add an item to start tracking your collection and estimated value.</p>
+            <p>Add an item to start building your personal inventory.</p>
           </>
         )}
       </div>
