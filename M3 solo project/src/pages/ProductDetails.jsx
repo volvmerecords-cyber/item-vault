@@ -1,4 +1,5 @@
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useState } from "react";
+import { useLocation, useNavigate, useParams, Link } from "react-router-dom";
 import useProducts from "../hooks/useProducts";
 
 function formatStatus(status) {
@@ -9,9 +10,12 @@ function formatStatus(status) {
 
 function ProductDetails() {
   const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const { getProductById, deleteProduct, loading } = useProducts();
   const item = getProductById(id);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState(location.state?.deleteError || "");
 
   if (loading) {
     return (
@@ -33,8 +37,28 @@ function ProductDetails() {
   }
 
   async function handleDelete() {
-    await deleteProduct(item.id);
-    navigate("/dashboard");
+    if (isDeleting) return;
+
+    const itemId = item.id;
+    setDeleteError("");
+    setIsDeleting(true);
+
+    const deleteRequest = deleteProduct(itemId);
+    navigate("/dashboard", { replace: true });
+
+    try {
+      await deleteRequest;
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "The item could not be deleted. Please try again.";
+
+      navigate(`/items/${itemId}`, {
+        replace: true,
+        state: { deleteError: message },
+      });
+    }
   }
 
   const optionalDetails = [
@@ -57,11 +81,21 @@ function ProductDetails() {
           <Link className="button button--secondary" to={`/items/${item.id}/edit`}>
             Edit item
           </Link>
-          <button className="button button--secondary" onClick={handleDelete}>
-            Delete item
+          <button
+            className="button button--danger"
+            disabled={isDeleting}
+            onClick={handleDelete}
+          >
+            {isDeleting ? "Deleting..." : "Delete item"}
           </button>
         </div>
       </div>
+
+      {deleteError && (
+        <p className="form-error delete-error" role="alert">
+          {deleteError}
+        </p>
+      )}
 
       <div className="detail-grid">
         {item.imageUrl && (

@@ -1,6 +1,26 @@
 import ItemCard from "./ProductCard";
 
-function ProductList({ products, hasProducts }) {
+function InventoryRows({ products }) {
+  return (
+    <div className="inventory-list">
+      <div className="inventory-list__header" aria-hidden="true">
+        <span>Item</span>
+        <span>Category</span>
+        <span>Location</span>
+        <span>Status</span>
+      </div>
+      {products.map((product) => (
+        <ItemCard key={product.id} product={product} />
+      ))}
+    </div>
+  );
+}
+
+function ProductList({ products, hasProducts, loading }) {
+  if (loading) {
+    return <div className="inventory-loading">Loading inventory...</div>;
+  }
+
   if (!products.length) {
     return (
       <div className="empty-state">
@@ -19,13 +39,7 @@ function ProductList({ products, hasProducts }) {
     );
   }
 
-  return (
-    <div className="product-grid">
-      {products.map((product) => (
-        <ItemCard key={product.id} product={product} />
-      ))}
-    </div>
-  );
+  return <InventoryRows products={products} />;
 }
 
 export default ProductList;

@@ -1,7 +1,7 @@
 function Footer() {
   return (
     <footer className="site-footer">
-      <p>ItemVault — a simple personal inventory manager powered by localStorage.</p>
+      <p>ItemVault — your personal inventory, securely synced with Firebase.</p>
     </footer>
   );
 }

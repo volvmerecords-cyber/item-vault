@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy:vercel": "vercel --prod",
+    "deploy:firebase": "firebase deploy",
+    "deploy:all": "npm run build && vercel --prod && firebase deploy"
   },
   "dependencies": {
     "firebase": "^10.13.0",
@@ -15,7 +18,6 @@
     "react-router-dom": "^7.6.0"
   },
   "devDependencies": {
-    "@rolldown/plugin-babel": "^0.2.3",
     "@vitejs/plugin-react": "^4.3.4",
     "vite": "^6.3.5"
   }

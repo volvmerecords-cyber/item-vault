@@ -9,7 +9,7 @@ function Navbar() {
   const [theme, setTheme] = useState(() => {
     try {
       return window.localStorage.getItem("theme") || "light";
-    } catch (e) {
+    } catch {
       return "light";
     }
   });
@@ -18,7 +18,7 @@ function Navbar() {
     try {
       document.documentElement.setAttribute("data-theme", theme);
       window.localStorage.setItem("theme", theme);
-    } catch (e) {
+    } catch {
       // ignore if storage isn't available
     }
   }, [theme]);

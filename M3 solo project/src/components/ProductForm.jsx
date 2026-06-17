@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useRef } from "react";
 
 const COMMON_LOCATIONS = [
   "Bedroom",
@@ -29,13 +29,13 @@ function ProductForm({ initialData = {}, onSubmit, submitLabel = "Save item" }) 
   const [notes, setNotes] = useState(initialData.notes || "");
   const [imageUrl, setImageUrl] = useState(initialData.imageUrl || "");
   const [status, setStatus] = useState(initialData.status || "owned");
-  const [errors, setErrors] = useState({});
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const isSubmittingRef = useRef(false);
   const location = locationOption === "custom" ? customLocation : locationOption;
 
-  const getValidationErrors = useCallback(() => {
+  function getValidationErrors() {
     const validationErrors = {};
 
     if (!name.trim()) validationErrors.name = "Item name is required.";
@@ -47,19 +47,15 @@ function ProductForm({ initialData = {}, onSubmit, submitLabel = "Save item" }) 
     if (!status.trim()) validationErrors.status = "Status is required.";
 
     return validationErrors;
-  }, [name, category, price, location, status]);
+  }
 
-  useEffect(() => {
-    const validationErrors = getValidationErrors();
-
-    setErrors(validationErrors);
-  }, [getValidationErrors]);
+  const validationErrors = getValidationErrors();
+  const errors = hasAttemptedSubmit ? validationErrors : {};
 
   async function handleSubmit(event) {
     event.preventDefault();
 
-    const validationErrors = getValidationErrors();
-    setErrors(validationErrors);
+    setHasAttemptedSubmit(true);
 
     if (isSubmittingRef.current || Object.keys(validationErrors).length > 0) return;
 
@@ -69,7 +65,6 @@ function ProductForm({ initialData = {}, onSubmit, submitLabel = "Save item" }) 
 
     try {
       await onSubmit({
-        id: initialData.id || Date.now().toString(),
         name: name.trim(),
         category: category.trim(),
         price: price === "" ? null : Number(price),
@@ -99,8 +94,14 @@ function ProductForm({ initialData = {}, onSubmit, submitLabel = "Save item" }) 
             value={name}
             onChange={(event) => setName(event.target.value)}
             placeholder="e.g. Laptop, Sofa, Bicycle"
+            aria-invalid={Boolean(errors.name)}
+            aria-describedby={errors.name ? "item-name-error" : undefined}
           />
-          {errors.name && <span className="field-error">{errors.name}</span>}
+          {errors.name && (
+            <span className="field-error" id="item-name-error" role="alert">
+              {errors.name}
+            </span>
+          )}
         </label>
 
         <div className="field-row">
@@ -110,8 +111,14 @@ function ProductForm({ initialData = {}, onSubmit, submitLabel = "Save item" }) 
               value={category}
               onChange={(event) => setCategory(event.target.value)}
               placeholder="e.g. Electronics, Furniture"
+              aria-invalid={Boolean(errors.category)}
+              aria-describedby={errors.category ? "category-error" : undefined}
             />
-            {errors.category && <span className="field-error">{errors.category}</span>}
+            {errors.category && (
+              <span className="field-error" id="category-error" role="alert">
+                {errors.category}
+              </span>
+            )}
           </label>
 
           <label>
@@ -132,6 +139,8 @@ function ProductForm({ initialData = {}, onSubmit, submitLabel = "Save item" }) 
           <select
             value={locationOption}
             onChange={(event) => setLocationOption(event.target.value)}
+            aria-invalid={Boolean(errors.location)}
+            aria-describedby={errors.location ? "location-error" : undefined}
           >
             <option value="">Choose a location</option>
             {COMMON_LOCATIONS.map((locationName) => (
@@ -149,7 +158,11 @@ function ProductForm({ initialData = {}, onSubmit, submitLabel = "Save item" }) 
               aria-label="Custom location"
             />
           )}
-          {errors.location && <span className="field-error">{errors.location}</span>}
+          {errors.location && (
+            <span className="field-error" id="location-error" role="alert">
+              {errors.location}
+            </span>
+          )}
         </label>
 
         <details className="optional-fields">
@@ -164,8 +177,14 @@ function ProductForm({ initialData = {}, onSubmit, submitLabel = "Save item" }) 
                   value={price}
                   onChange={(event) => setPrice(event.target.value)}
                   placeholder="0.00"
+                  aria-invalid={Boolean(errors.price)}
+                  aria-describedby={errors.price ? "price-error" : undefined}
                 />
-                {errors.price && <span className="field-error">{errors.price}</span>}
+                {errors.price && (
+                  <span className="field-error" id="price-error" role="alert">
+                    {errors.price}
+                  </span>
+                )}
               </label>
 
               <label>
@@ -211,7 +230,7 @@ function ProductForm({ initialData = {}, onSubmit, submitLabel = "Save item" }) 
 
         {submitError && <p className="form-error">{submitError}</p>}
 
-        <button type="submit" disabled={Object.keys(errors).length > 0 || isSubmitting}>
+        <button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Saving..." : submitLabel}
         </button>
       </fieldset>

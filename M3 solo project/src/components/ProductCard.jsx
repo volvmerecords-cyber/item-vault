@@ -7,38 +7,42 @@ function formatStatus(status) {
 }
 
 function ProductCard({ product }) {
+  const placeholderLetter = product.name?.trim().charAt(0).toUpperCase() || "I";
+
   return (
-    <article className="product-card">
-      {product.imageUrl && (
-        <div className="product-card__image">
-          <img src={product.imageUrl} alt={product.name} />
+    <Link
+      className="product-card"
+      to={`/items/${product.id}/edit`}
+      aria-label={`Edit ${product.name}`}
+    >
+      <div className="product-card__identity">
+        <div className="product-card__image" aria-hidden={!product.imageUrl}>
+          {product.imageUrl ? (
+            <img src={product.imageUrl} alt={product.name} />
+          ) : (
+            <span aria-hidden="true">{placeholderLetter}</span>
+          )}
         </div>
-      )}
-
-      <div className="product-card__body">
-        <div className="product-card__top">
-          <span className="product-card__tag">{product.category}</span>
-          <span className={`product-card__tag status-tag status-${product.status}`}>
-            {formatStatus(product.status)}
-          </span>
-        </div>
-
         <div className="product-card__content">
           <h2>{product.name}</h2>
           {product.notes && <p>{product.notes}</p>}
         </div>
-
-        <div className="product-card__meta">
-          <span>{product.location}</span>
-        </div>
-
-        <div className="product-card__footer">
-          <Link className="button button--secondary button--small" to={`/items/${product.id}`}>
-            View item
-          </Link>
-        </div>
       </div>
-    </article>
+
+      <div className="product-card__field" data-label="Category">
+        {product.category}
+      </div>
+
+      <div className="product-card__field" data-label="Location">
+        {product.location || "Unassigned"}
+      </div>
+
+      <div className="product-card__field" data-label="Status">
+        <span className={`status-label status-${product.status}`}>
+          {formatStatus(product.status)}
+        </span>
+      </div>
+    </Link>
   );
 }
 
