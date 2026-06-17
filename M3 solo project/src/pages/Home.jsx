@@ -19,14 +19,6 @@ const carouselSlides = [
     metricLabel: "for category, status, location, and sort",
     visual: "search",
   },
-  {
-    label: "Status",
-    title: "Status tags make the dashboard readable.",
-    text: "Owned, borrowed, sold, and lost states use clear labels and color cues, so the list explains itself at a glance.",
-    metric: "4 states",
-    metricLabel: "shown with accessible text labels",
-    visual: "status",
-  },
 ];
 
 function CarouselVisual({ type }) {
@@ -42,27 +34,6 @@ function CarouselVisual({ type }) {
         <div className="mini-result-card">
           <strong>Camera bag</strong>
           <span>Bedroom shelf · Owned</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (type === "status") {
-    return (
-      <div className="carousel-visual carousel-visual--status" aria-hidden="true">
-        <div className="mini-status-grid">
-          <span className="status-label status-owned">Owned</span>
-          <span className="status-label status-borrowed">Borrowed</span>
-          <span className="status-label status-lost">Lost</span>
-          <span className="status-label status-sold">Sold</span>
-        </div>
-        <div className="mini-row">
-          <strong>Winter coat</strong>
-          <span className="status-label status-owned">Owned</span>
-        </div>
-        <div className="mini-row">
-          <strong>Bluetooth speaker</strong>
-          <span className="status-label status-borrowed">Borrowed</span>
         </div>
       </div>
     );
