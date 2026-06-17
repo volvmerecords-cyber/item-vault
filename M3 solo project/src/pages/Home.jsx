@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
@@ -88,8 +88,20 @@ function CarouselVisual({ type }) {
 
 function Home() {
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+  const [hideHeroButtons, setHideHeroButtons] = useState(false);
   const { isLoggedIn } = useAuth();
   const activeSlide = carouselSlides[activeSlideIndex];
+
+  useEffect(() => {
+    function handleScroll() {
+      setHideHeroButtons(window.scrollY > 10);
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   function showPreviousSlide() {
     setActiveSlideIndex((currentIndex) =>
@@ -103,6 +115,13 @@ function Home() {
     );
   }
 
+  const heroPrimaryAction = isLoggedIn
+    ? { label: "View dashboard", to: "/dashboard" }
+    : { label: "Register", to: "/register" };
+  const heroSecondaryAction = isLoggedIn
+    ? { label: "Add item", to: "/add-item" }
+    : { label: "Sign in", to: "/login" };
+
   return (
     <section className="hero">
       <div className="hero-copy">
@@ -112,18 +131,26 @@ function Home() {
           Track your belongings with a clean dashboard, add new items easily, and
           find what you own by category, location, or status from any signed-in device.
         </p>
-        <div className="hero-actions">
-          <Link className="button button--primary" to="/dashboard">
-            View dashboard
+        <div className={`hero-actions${hideHeroButtons ? " hero-actions--hidden" : ""}`}>
+          <Link className="button button--primary" to={heroPrimaryAction.to}>
+            {heroPrimaryAction.label}
           </Link>
-          <Link className="button button--secondary" to="/add-item">
-            Add item
+          <Link className="button button--secondary" to={heroSecondaryAction.to}>
+            {heroSecondaryAction.label}
           </Link>
         </div>
       </div>
 
       {!isLoggedIn && (
         <div className="hero-panel hero-carousel" aria-label="ItemVault feature carousel">
+          <div className="carousel-intro">
+            <span className="eyebrow">Features</span>
+            <h2>Preview what ItemVault helps you manage.</h2>
+            <p>
+              A quick look at the inventory tools available after you create an account.
+            </p>
+          </div>
+
           <div className="carousel-topline">
             <span>{activeSlide.label}</span>
             <div className="carousel-controls">
@@ -141,7 +168,7 @@ function Home() {
           </div>
 
           <div className="carousel-slide" aria-live="polite">
-            <h2>{activeSlide.title}</h2>
+            <h3>{activeSlide.title}</h3>
             <p>{activeSlide.text}</p>
             <div className="carousel-proof">
               <strong>{activeSlide.metric}</strong>

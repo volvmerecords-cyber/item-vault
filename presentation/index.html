@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>ItemVault Slides</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="deck">
+      <section class="slide cover">
+        <div class="col">
+          <div class="eyebrow">M3 Solo Project</div>
+          <h1>ItemVault</h1>
+          <p class="lead">Personal inventory manager — design & architecture highlights</p>
+          <div class="meta">June 5, 2026</div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2>Overview</h2>
+        <p>
+          ItemVault helps users record, organize, search, and update belongings in a clean dashboard.
+          Quickly see owned items, total value, location, and status (owned, sold, lost, borrowed).
+        </p>
+      </section>
+
+      <section class="slide">
+        <h2>Problem & Solution</h2>
+        <ul>
+          <li>Problem: Users lose track of personal items and purchase history.</li>
+          <li>Solution: A simple dashboard with search, filters, and item detail pages.</li>
+        </ul>
+      </section>
+
+      <section class="slide">
+        <h2>Design Goals</h2>
+        <div class="grid-3">
+          <div class="card"><h3>Simple Organization</h3><p>Search, categories, and stats on one screen.</p></div>
+          <div class="card"><h3>Secure Data</h3><p>Firebase Auth + Firestore user-scoped data.</p></div>
+          <div class="card"><h3>Consistent Experience</h3><p>Cards, tokens, and rounded controls across screens.</p></div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2>Visual System</h2>
+        <div class="swatches">
+          <div class="swatch" style="background:#4f46e5">#4f46e5</div>
+          <div class="swatch" style="background:#3730a3">#3730a3</div>
+          <div class="swatch" style="background:#102a43">#102a43</div>
+          <div class="swatch soft" style="background:#f4f5fb">#f4f5fb</div>
+        </div>
+        <p class="muted">System sans fonts, rounded cards, friendly color tokens.</p>
+      </section>
+
+      <section class="slide">
+        <h2>User Flow</h2>
+        <div class="flow">Home → Login/Register → Dashboard → Add/View Item → Edit/Delete</div>
+      </section>
+
+      <section class="slide">
+        <h2>Key Screens</h2>
+        <div class="grid-3">
+          <div class="card"><h3>Home</h3><p>Intro, CTA to dashboard or add item.</p></div>
+          <div class="card"><h3>Dashboard</h3><p>Search, filters, stats, item cards.</p></div>
+          <div class="card"><h3>Item Detail</h3><p>Image, metadata, edit & delete actions.</p></div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2>Components</h2>
+        <ul>
+          <li>ProductForm — add/edit validation</li>
+          <li>ProductCard — scannable item card</li>
+          <li>SearchBar & FilterDropdown — reusable controls</li>
+        </ul>
+      </section>
+
+      <section class="slide">
+        <h2>Routing & Protection</h2>
+        <p>Public: /, /login, /register. Protected: /dashboard, /add-item, /items/:id, /items/:id/edit</p>
+      </section>
+
+      <section class="slide">
+        <h2>Data & Authentication</h2>
+        <ul>
+          <li>Firebase Auth (email/password + Google)</li>
+          <li>Firestore: user-scoped items, real-time snapshots</li>
+        </ul>
+      </section>
+
+      <section class="slide">
+        <h2>Accessibility & Responsive</h2>
+        <p>Visible labels, alt text for images, readable contrast, responsive grid layouts.</p>
+      </section>
+
+      <section class="slide">
+        <h2>Implementation Files</h2>
+        <ul>
+          <li>src/App.jsx, src/App.css</li>
+          <li>src/pages/* (Home, Products, AddProduct, ProductDetails, EditRequest)</li>
+          <li>src/components/* (ProductForm, ProductCard, SearchBar)</li>
+        </ul>
+      </section>
+
+      <section class="slide final">
+        <h2>Next Steps</h2>
+        <ul>
+          <li>Replace placeholder screenshots with app screenshots or mockups.</li>
+          <li>Include logo and contact/author slide.</li>
+          <li>Export to PDF (instructions in README).</li>
+        </ul>
+      </section>
+    </div>
+  </body>
+</html>

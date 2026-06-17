@@ -129,6 +129,7 @@ main {
   font-size: 1.45rem;
   font-weight: 800;
   color: var(--primary-dark);
+  white-space: nowrap;
 }
 
 .main-nav {
@@ -136,6 +137,11 @@ main {
   flex-wrap: wrap;
   gap: 14px;
   align-items: center;
+}
+
+.main-nav .nav-link,
+.main-nav .button {
+  white-space: nowrap;
 }
 
 .user-greeting {
@@ -294,10 +300,26 @@ main {
 
 .hero-carousel {
   display: grid;
-  min-height: 460px;
+  min-height: 520px;
   align-content: space-between;
-  gap: 24px;
+  gap: 22px;
   overflow: hidden;
+}
+
+.carousel-intro {
+  display: grid;
+  gap: 8px;
+}
+
+.carousel-intro h2 {
+  margin: 0;
+  font-size: clamp(1.45rem, 1.8vw, 1.85rem);
+  line-height: 1.12;
+}
+
+.carousel-intro p {
+  margin: 0;
+  font-size: 0.95rem;
 }
 
 .carousel-topline,
@@ -371,7 +393,7 @@ main {
   gap: 18px;
 }
 
-.carousel-slide h2 {
+.carousel-slide h3 {
   margin-bottom: 0;
   font-size: clamp(1.75rem, 2vw, 2.25rem);
   line-height: 1.1;
@@ -1124,6 +1146,26 @@ main {
   color: var(--muted);
 }
 
+.site-footer p {
+  max-width: 680px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 0.95rem;
+}
+
+.footer-links a {
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
 @media (max-width: 900px) {
   .hero,
   .detail-grid,
@@ -1145,24 +1187,30 @@ main {
   }
 
   .site-header {
-    align-items: flex-start;
-    justify-content: flex-start;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 20px 0;
   }
 
   .main-nav {
-    width: 100%;
-    gap: 8px;
+    flex: 0 1 auto;
+    justify-content: flex-end;
+    gap: 6px;
   }
 
   .main-nav .nav-link,
   .main-nav .button {
-    padding: 10px 14px;
+    padding: 8px 10px;
+    font-size: 0.87rem;
   }
 
   .theme-toggle {
-    flex: 0 0 42px;
-    width: 42px;
-    height: 42px;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    padding: 0;
   }
 
   .hero {
@@ -1188,6 +1236,22 @@ main {
     align-items: stretch;
   }
 
+  .hero-actions {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .hero-actions--hidden {
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+    height: 0;
+    overflow: hidden;
+  }
+
+  .hero-actions .button {
+    width: 100%;
+  }
+
   .button {
     display: inline-flex;
     justify-content: center;
@@ -1198,7 +1262,7 @@ main {
     gap: 20px;
   }
 
-  .carousel-slide h2 {
+  .carousel-slide h3 {
     font-size: 1.55rem;
     overflow-wrap: break-word;
   }

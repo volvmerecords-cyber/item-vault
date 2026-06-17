@@ -34,19 +34,10 @@ function Navbar() {
       </div>
 
       <nav className="main-nav">
-        {isLoggedIn ? (
+        {isLoggedIn && (
           <button className="button button--secondary" onClick={logout}>
             Logout
           </button>
-        ) : (
-          <>
-            <Link className="nav-link" to="/login">
-              Login
-            </Link>
-            <Link className="button button--secondary" to="/register">
-              Register
-            </Link>
-          </>
         )}
 
         <button
